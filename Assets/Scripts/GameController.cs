@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameController : MonoBehaviour
 {
@@ -10,8 +11,9 @@ public class GameController : MonoBehaviour
     [Header("Blades")]
     [SerializeField] private List<BladeController> blades;
     [SerializeField] private int bladeCount;
-    private const int MAX_BLADE_COUNT = 4;
+    private const int MAX_BLADE_COUNT = 6;
     [SerializeField] private List<int> bladeTiers;
+    private const int MAX_TIER_LEVEL = 3;
 
     private const int MAX_ROTATION_SPEED_LEVEL = 10;
     [Header("Rotation")]
@@ -26,16 +28,18 @@ public class GameController : MonoBehaviour
     [SerializeField] private float totalIncome;
 
     [Header("UI")]
-    [SerializeField] private Text cashText;
-    [SerializeField] private Text incomeText;
+    [SerializeField] private TMP_Text cashText;
+    [SerializeField] private TMP_Text incomeText;
 
     [SerializeField] private ShopController shopController;
+
+    [SerializeField] private GrassChanger grassChanger;
 
     private float timeAfterIncome;
 
     private bool mergeable = false;
 
-    private void Start()
+    private void Awake()
     {
         SetBladeTiers(0);
         SetTotalIncome();
@@ -113,6 +117,7 @@ public class GameController : MonoBehaviour
         if (CheckRotationSpeedLevel() && shopController.BuyRotation())
         {
             RotationSpeedLevelUp();
+            grassChanger.SetRotationSpeed(rotationSpeedLevel);
         }
     }
 
@@ -121,6 +126,7 @@ public class GameController : MonoBehaviour
         if (CheckBladeLengthLevel() && shopController.BuyLength())
         {
             BladeLengthLevelUp();
+            grassChanger.SetBladeLengthLevel(bladeLengthLevel);
         }
     }
 
@@ -131,6 +137,7 @@ public class GameController : MonoBehaviour
             bladeCount += 1;
             bladeTiers[bladeCount - 1] = 1;
             SetBladeTiers(0);
+            grassChanger.SetActiveGrassCount(bladeCount);
             mergeable = true;
         }
     }
@@ -139,9 +146,11 @@ public class GameController : MonoBehaviour
     {
         if (CheckMergeable() && shopController.BuyMerge())
         {
-            for (int i = 0; i < bladeTiers.Count; i++)
+            for (int i = 0; i < bladeTiers.Count - 1; i++)
             {
-                if (bladeTiers[i] == bladeTiers[i + 1])
+                if (bladeTiers[i] + bladeTiers[i + 1] != 0 && 
+                    bladeTiers[i] == bladeTiers[i + 1] &&
+                    bladeTiers[i] + bladeTiers[i + 1] != MAX_TIER_LEVEL * 2)
                 {
                     bladeTiers[i] += 1;
 
@@ -152,6 +161,7 @@ public class GameController : MonoBehaviour
                     bladeCount -= 1;
                     bladeTiers[bladeTiers.Count - 1] = 0;
                     SetBladeTiers(i);
+                    grassChanger.SetActiveGrassCount(bladeCount);
                     mergeable = true;
                     return;
                 }
@@ -162,7 +172,7 @@ public class GameController : MonoBehaviour
 
     private bool CheckMergeable()
     {
-        return mergeable;
+        return mergeable && bladeCount > 1;
     }
 
     private bool CheckBladeCount()

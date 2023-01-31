@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ShopController : MonoBehaviour
 {
@@ -13,7 +14,8 @@ public class ShopController : MonoBehaviour
     [SerializeField] private float rotationPriceIncrement;
     private float totalRotationBought;
     private float rotationPrice;
-    [SerializeField] private Text rotationPriceText;
+    [SerializeField] private TMP_Text rotationPriceText;
+    [SerializeField] private TMP_Text roationPriceLevel;
 
     private const int MAX_BLADE_LENGTH_LEVEL = 5;
     [Header("Blade Length")]
@@ -22,7 +24,8 @@ public class ShopController : MonoBehaviour
     [SerializeField] private float lengthPriceIncrement;
     private float totalLengthBought;
     private float lengthPrice;
-    [SerializeField] private Text lengthPriceText;
+    [SerializeField] private TMP_Text lengthPriceText;
+    [SerializeField] private TMP_Text lengthPriceLevel;
 
     private const int MAX_BLADE_COUNT = 4;
     [Header("Blade Count")]
@@ -30,14 +33,15 @@ public class ShopController : MonoBehaviour
     [SerializeField] private float bladePriceIncrement;
     private float bladePrice;
     private float totalBladesBought;
-    [SerializeField] private Text bladePriceText;
+    [SerializeField] private TMP_Text bladePriceText;
+    [SerializeField] private TMP_Text bladePriceLevel;
 
     [Header("Merge")]
     [SerializeField] private float baseMergePrice;
     [SerializeField] private float mergePriceIncrement;
     private int totalMergeBought;
     private float mergePrice;
-    [SerializeField] private Text mergePriceText;
+    [SerializeField] private TMP_Text mergePriceText;
 
     [SerializeField] private GameController gameController;
 

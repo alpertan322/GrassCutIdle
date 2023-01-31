@@ -13,6 +13,7 @@ public class BladeController : MonoBehaviour
     [SerializeField] private int rotationSpeedLevel;
     [SerializeField] private float rotationSpeedIncrement;
     [SerializeField] private float baseRotationSpeed;
+    private float maxRotationSpeed;
     private float rotationSpeed;
 
     private int MAX_BLADE_LENGTH_LEVEL = 5;
@@ -34,17 +35,28 @@ public class BladeController : MonoBehaviour
     [SerializeField] private float incomeIncrementLength;
     [SerializeField] private float incomeIncrementTier;
 
+
+    private double rotatePeriod;
+    private double timeAfterRotate;
+    private int currentRotation;
+
+    private bool start;
+
     private GameObject bladeParent;
     private GameObject baseParent;
     private GameObject activeTier;
 
-    void Awake()
+    void Start()
     {
-        rotationSpeed = baseRotationSpeed + rotationSpeedLevel * rotationSpeedIncrement;
-        bladeLength = baseBladeLength + bladeLengthLevel * rotationSpeedIncrement;
-        SetRotationSpeed();
+        start = false;
+        rotatePeriod = 0.001f;
+        timeAfterRotate = 0;
+        currentRotation = 180;
+        bladeLength = baseBladeLength + bladeLengthLevel * bladeLengthIncrement;
         SetBladeTier();
         SetIncome();
+        rotationSpeed = baseRotationSpeed + rotationSpeedLevel * rotationSpeedIncrement;
+        maxRotationSpeed = baseRotationSpeed + MAX_ROTATION_SPEED_LEVEL * rotationSpeedIncrement;
     }
 
     private void FixedUpdate()
@@ -60,8 +72,11 @@ public class BladeController : MonoBehaviour
     private void SetBladeLength()
     {
         bladeLength = baseBladeLength + bladeLengthLevel * bladeLengthIncrement;
-        bladeParent.transform.GetChild(0).localPosition = new Vector3(bladeLength ,0, 0);
-        baseParent.transform.localScale = new Vector3(0, bladeLength / 2, 0.05f);
+        if (bladeParent != null && baseParent != null)
+        {
+            bladeParent.transform.GetChild(0).localPosition = new Vector3(bladeLength ,0, 0);
+            baseParent.transform.localScale = new Vector3(0, bladeLength / 2, 0.05f);
+        }
     }
 
     public void SetBladeTier()
@@ -119,7 +134,9 @@ public class BladeController : MonoBehaviour
     
     private void RotateBlade()
     {
-        transform.Rotate(new Vector3(0, 0, rotationSpeed) * Time.deltaTime);
+        currentRotation = (currentRotation + (int) rotationSpeedLevel) % 360;
+        Debug.Log("2 " + currentRotation);
+        transform.rotation = Quaternion.Euler(-90, currentRotation, 0);
     }
 
     public float GetIncome()
